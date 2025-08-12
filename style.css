@@ -829,8 +829,12 @@ body {
     font-size: 1.1em;
 } 
 
-/* Masquer complètement les éléments de feedback et de score */
-.progress-container,
+/* Afficher uniquement la progression */
+.progress-container {
+    display: block;
+}
+
+/* Masquer le score */
 .score-container {
     display: none !important;
 }
@@ -855,10 +859,18 @@ body {
     border-left: 4px solid #3498db;
 }
 
-/* Masquer les éléments de score et de progression */
+/* Afficher uniquement la progression */
 #progress-fill,
-#question-counter,
-#score,
+#question-counter {
+    display: block;
+}
+
+/* Masquer le score */
+#score {
+    display: none !important;
+}
+
+/* Masquer les éléments de résultats détaillés */
 #final-score-text,
 #percentage,
 #correct-answers,

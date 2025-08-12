@@ -102,13 +102,14 @@ function loadQuestion() {
     // Mettre à jour l'interface
     questionImage.src = question.image;
     questionText.textContent = question.question;
-    // Masquer le compteur de questions et le score
-    // questionCounter.textContent = `Question ${currentQuestionIndex + 1}/${quizQuestions.length}`;
+    // Afficher le compteur de questions
+    questionCounter.textContent = `Question ${currentQuestionIndex + 1}/${quizQuestions.length}`;
+    // Masquer le score à l'utilisateur (calculé en arrière-plan pour Discord)
     // scoreElement.textContent = `Score: ${score}`;
     
-    // Masquer la barre de progression
-    // const progress = ((currentQuestionIndex + 1) / quizQuestions.length) * 100;
-    // progressFill.style.width = `${progress}%`;
+    // Afficher la barre de progression
+    const progress = ((currentQuestionIndex + 1) / quizQuestions.length) * 100;
+    progressFill.style.width = `${progress}%`;
     
     // Mélanger l'ordre des réponses pour cette question
     const shuffledAnswers = shuffleArray([...question.answers]);
