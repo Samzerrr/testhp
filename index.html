@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SASP Quiz 10-20 - Toutes les Questions</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <!-- Écran de démarrage -->
+        <div id="start-screen" class="screen active">
+            <div class="start-content">
+                <h1>🚔 SASP Quiz 10-20</h1>
+                <p>Entraînement complet aux positions 10-20 pour les officiers du SASP</p>
+                <div class="stats">
+                    <div class="stat">
+                        <span class="number">132</span>
+                        <span class="label">Questions</span>
+                    </div>
+                    <div class="stat">
+                        <span class="number">6</span>
+                        <span class="label">Choix multiples</span>
+                    </div>
+                </div>
+                
+                <!-- Configuration Discord -->
+                <div class="discord-config">
+                    <h3>📱 Configuration Discord</h3>
+                    <div class="auto-discord-info">
+                        <span class="auto-icon">🤖</span>
+                        <span class="auto-text">Envoi automatique des résultats sur Discord</span>
+                    </div>
+                    <div class="input-group">
+                        <label for="discord-username">Nom d'utilisateur (optionnel):</label>
+                        <input type="text" id="discord-username" placeholder="Votre nom" />
+                        <small class="username-note">Ce nom apparaîtra dans les messages Discord</small>
+                    </div>
+                </div>
+                
+                <button id="start-btn" class="btn btn-primary">🚀 Commencer l'Entraînement Complet (Webhook Configuré)</button>
+            </div>
+        </div>
+
+        <!-- Écran du quiz -->
+        <div id="quiz-screen" class="screen">
+            <div class="quiz-header">
+                <div class="progress-container" style="display: none;">
+                    <div class="progress-bar">
+                        <div id="progress-fill" class="progress-fill"></div>
+                    </div>
+                    <span id="question-counter" class="question-counter">Question 1/132</span>
+                </div>
+                <div class="score-container" style="display: none;">
+                    <span id="score" class="score">Score: 0</span>
+                </div>
+            </div>
+
+            <div class="quiz-content">
+                <div class="image-container">
+                    <img id="question-image" src="" alt="Question image" class="question-image">
+                    <div class="image-overlay">
+                        <div class="timer">
+                            <span id="timer-text">30</span>s
+                        </div>
+                    </div>
+                </div>
+
+                <div class="question-section">
+                    <h2 id="question-text" class="question-text">Chargement de la question...</h2>
+                    
+                    <div class="answers-grid">
+                        <button class="answer-btn" data-index="0">
+                            <span class="answer-letter">A</span>
+                            <span class="answer-text">Réponse A</span>
+                        </button>
+                        <button class="answer-btn" data-index="1">
+                            <span class="answer-letter">B</span>
+                            <span class="answer-text">Réponse B</span>
+                        </button>
+                        <button class="answer-btn" data-index="2">
+                            <span class="answer-letter">C</span>
+                            <span class="answer-text">Réponse C</span>
+                        </button>
+                        <button class="answer-btn" data-index="3">
+                            <span class="answer-letter">D</span>
+                            <span class="answer-text">Réponse D</span>
+                        </button>
+                        <button class="answer-btn" data-index="4">
+                            <span class="answer-letter">E</span>
+                            <span class="answer-text">Réponse E</span>
+                        </button>
+                        <button class="answer-btn" data-index="5">
+                            <span class="answer-letter">F</span>
+                            <span class="answer-text">Réponse F</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="quiz-footer">
+                <button id="next-btn" class="btn btn-secondary" disabled>Suivant</button>
+            </div>
+        </div>
+
+        <!-- Écran de résultats -->
+        <div id="results-screen" class="screen">
+            <div class="results-content">
+                <h1>🎉 Entraînement Terminé !</h1>
+                <p class="completion-message">Félicitations ! Vous avez terminé l'entraînement complet aux positions 10-20.</p>
+                <p class="discord-notice">Vos résultats ont été automatiquement envoyés sur Discord.</p>
+                
+                <!-- Configuration Discord -->
+                <div class="discord-config">
+                    <h3>📱 Configuration Discord</h3>
+                    <div class="auto-discord-info">
+                        <span class="auto-icon">🤖</span>
+                        <span class="auto-text">Envoi automatique des résultats sur Discord</span>
+                    </div>
+                    <div class="input-group">
+                        <label for="discord-username">Nom d'utilisateur (optionnel):</label>
+                        <input type="text" id="discord-username" placeholder="Votre nom" />
+                        <small class="username-note">Ce nom apparaîtra dans les messages Discord</small>
+                    </div>
+                </div>
+                
+                <div class="action-buttons">
+                    <button id="restart-btn" class="btn btn-primary">Recommencer</button>
+                    <button id="home-btn" class="btn btn-secondary">Accueil</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="questions.js"></script>
+    <script src="script.js"></script>
+</body>
+</html> 
