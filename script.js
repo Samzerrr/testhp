@@ -3,7 +3,7 @@ let currentQuestionIndex = 0;
 let score = 0;
 let selectedAnswer = null;
 let timer = null;
-let timeLeft = 30;
+let timeLeft = 10;
 let answerTimes = [];
 let startTime = null;
 let quizQuestions = []; // Questions sélectionnées pour ce quiz
@@ -95,7 +95,7 @@ function loadQuestion() {
     
     // Réinitialiser l'état
     selectedAnswer = null;
-    timeLeft = 30;
+    timeLeft = 10;
     startTime = Date.now();
     questionStartTimes[currentQuestionIndex] = startTime;
     
