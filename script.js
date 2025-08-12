@@ -121,6 +121,8 @@ function loadQuestion() {
         btn.querySelector('.answer-text').textContent = shuffledAnswers[index];
         btn.dataset.correctIndex = newCorrectIndex; // Stocker le nouvel index de la bonne réponse
         btn.disabled = false;
+        // Retirer la classe selected si elle existe
+        btn.classList.remove('selected');
     });
     
     // Désactiver le bouton suivant
@@ -160,6 +162,13 @@ function selectAnswer(answerIndex) {
     
     selectedAnswer = answerIndex;
     clearInterval(timer);
+    
+    // Ajouter la classe selected pour garder le bouton en bleu
+    answerBtns.forEach((btn, index) => {
+        if (index === answerIndex) {
+            btn.classList.add('selected');
+        }
+    });
     
     // Calculer le temps de réponse
     const responseTime = Math.round((Date.now() - startTime) / 1000);
