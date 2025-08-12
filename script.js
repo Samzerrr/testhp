@@ -9,8 +9,7 @@ let startTime = null;
 let quizQuestions = []; // Questions sélectionnées pour ce quiz
 let userAnswers = []; // Réponses de l'utilisateur
 let questionStartTimes = []; // Temps de début de chaque question
-let discordWebhook = 'https://discord.com/api/webhooks/1404874505754644531/NcWlCVa_5aj8U4sdJZN3R5PS2BpDav4zanG5l7b0fiY1gYKGK8wgXYm2vr0URdUWYb6F'; // Webhook Discord par défaut
-let discordUsername = ''; // Nom d'utilisateur Discord
+let username = ''; // Nom d'utilisateur
 
 // Éléments DOM
 const startScreen = document.getElementById('start-screen');
@@ -27,15 +26,7 @@ const progressFill = document.getElementById('progress-fill');
 const questionCounter = document.getElementById('question-counter');
 const scoreElement = document.getElementById('score');
 const timerText = document.getElementById('timer-text');
-const finalScoreText = document.getElementById('final-score-text');
-const percentageElement = document.getElementById('percentage');
-const correctAnswersElement = document.getElementById('correct-answers');
-const wrongAnswersElement = document.getElementById('wrong-answers');
-const avgTimeElement = document.getElementById('avg-time');
-const answersList = document.getElementById('answers-list');
-const discordWebhookInput = document.getElementById('discord-webhook');
-const discordUsernameInput = document.getElementById('discord-username');
-const discordStatus = document.getElementById('discord-status');
+const usernameInput = document.getElementById('username');
 
 // Initialisation
 document.addEventListener('DOMContentLoaded', () => {
@@ -45,37 +36,48 @@ document.addEventListener('DOMContentLoaded', () => {
     restartBtn.addEventListener('click', restartQuiz);
     homeBtn.addEventListener('click', goToHome);
     
+    // Bouton d'administration
+    const adminBtn = document.getElementById('admin-btn');
+    if (adminBtn) {
+        adminBtn.addEventListener('click', () => {
+            window.open('admin.html', '_blank');
+        });
+    }
+    
     // Événements des réponses
     answerBtns.forEach(btn => {
         btn.addEventListener('click', () => selectAnswer(parseInt(btn.dataset.index)));
     });
     
-    // Sauvegarder les paramètres Discord
-    discordUsernameInput.addEventListener('input', () => {
-        discordUsername = discordUsernameInput.value;
-        localStorage.setItem('discordUsername', discordUsername);
+    // Sauvegarder le nom d'utilisateur
+    usernameInput.addEventListener('input', () => {
+        username = usernameInput.value;
+        localStorage.setItem('quizUsername', username);
     });
     
-    // Charger les paramètres sauvegardés
-    loadDiscordSettings();
+    // Charger le nom d'utilisateur sauvegardé
+    loadUserSettings();
 });
 
-// Charger les paramètres Discord sauvegardés
-function loadDiscordSettings() {
-    // Utiliser directement le webhook par défaut
-    discordWebhookInput.value = discordWebhook;
-    
-    // Charger le nom d'utilisateur sauvegardé si disponible
-    const savedUsername = localStorage.getItem('discordUsername');
+// Charger les paramètres utilisateur sauvegardés
+function loadUserSettings() {
+    const savedUsername = localStorage.getItem('quizUsername');
     if (savedUsername) {
-        discordUsernameInput.value = savedUsername;
-        discordUsername = savedUsername;
+        usernameInput.value = savedUsername;
+        username = savedUsername;
     }
 }
 
 // Fonctions principales
 function startQuiz() {
-    // Utiliser toutes les 122 questions
+    // Vérifier que le nom d'utilisateur est saisi
+    if (!username.trim()) {
+        alert('Veuillez saisir votre nom avant de commencer le quiz.');
+        usernameInput.focus();
+        return;
+    }
+    
+    // Utiliser toutes les 132 questions
     quizQuestions = [...allQuestions];
     
     // Réinitialiser les variables
@@ -104,7 +106,7 @@ function loadQuestion() {
     questionText.textContent = question.question;
     // Afficher le compteur de questions
     questionCounter.textContent = `Question ${currentQuestionIndex + 1}/${quizQuestions.length}`;
-    // Masquer le score à l'utilisateur (calculé en arrière-plan pour Discord)
+    // Masquer le score à l'utilisateur (calculé en arrière-plan pour la sauvegarde locale)
     // scoreElement.textContent = `Score: ${score}`;
     
     // Afficher la barre de progression
@@ -153,6 +155,20 @@ function timeUp() {
     // Si aucune réponse n'a été sélectionnée, considérer comme incorrecte
     if (selectedAnswer === null) {
         selectedAnswer = -1;
+        
+        // Enregistrer la réponse "timeout" pour la sauvegarde locale
+        const correctIndex = parseInt(answerBtns[0].dataset.correctIndex);
+        userAnswers[currentQuestionIndex] = {
+            questionIndex: currentQuestionIndex,
+            selectedAnswer: -1, // -1 = Aucune réponse
+            correctAnswer: correctIndex,
+            isCorrect: false, // Toujours incorrect si pas de réponse
+            responseTime: 10, // Temps maximum (10 secondes)
+            question: quizQuestions[currentQuestionIndex]
+        };
+        
+        // Ajouter le temps de réponse pour les statistiques
+        answerTimes.push(10);
     }
     
     showCorrectAnswer();
@@ -208,7 +224,7 @@ function showCorrectAnswer() {
     //     answerBtns[selectedAnswer].classList.add('incorrect');
     // }
     
-    // Mettre à jour le score en arrière-plan (pour Discord uniquement)
+    // Mettre à jour le score en arrière-plan (pour la sauvegarde locale uniquement)
     if (selectedAnswer === correctIndex) {
         score++;
         // Ne pas afficher le score à l'utilisateur
@@ -230,7 +246,7 @@ function nextQuestion() {
 }
 
 function showResults() {
-    // Calculer les statistiques en arrière-plan pour Discord uniquement
+    // Calculer les statistiques en arrière-plan pour la sauvegarde locale uniquement
     const percentage = Math.round((score / quizQuestions.length) * 100);
     const wrongAnswers = quizQuestions.length - score;
     const avgTime = answerTimes.length > 0 ? Math.round(answerTimes.reduce((a, b) => a + b) / answerTimes.length) : 0;
@@ -247,145 +263,8 @@ function showResults() {
     
     showScreen(resultsScreen);
     
-    // Envoyer automatiquement les résultats sur Discord
-    setTimeout(() => {
-        sendToDiscord();
-    }, 2000); // Attendre 2 secondes pour que l'utilisateur voie ses résultats
-}
-
-function generateAnswersSummary() {
-    answersList.innerHTML = '';
-    
-    userAnswers.forEach((userAnswer, index) => {
-        const question = userAnswer.question;
-        const answerItem = document.createElement('div');
-        answerItem.className = `answer-item ${userAnswer.isCorrect ? 'correct' : 'incorrect'}`;
-        
-        // Utiliser les informations stockées dans userAnswer
-        const selectedAnswerText = userAnswer.selectedAnswer >= 0 ? 
-            question.answers[userAnswer.selectedAnswer] : 'Aucune réponse';
-        const correctAnswerText = question.answers[question.correct]; // Utiliser l'index original
-        
-        answerItem.innerHTML = `
-            <div class="answer-number">${index + 1}</div>
-            <div class="answer-content">
-                <div class="answer-question">${question.question}</div>
-                <div class="answer-details">
-                    <strong>Votre réponse:</strong> ${selectedAnswerText}<br>
-                    <strong>Réponse correcte:</strong> ${correctAnswerText}<br>
-                    <strong>Temps:</strong> ${userAnswer.responseTime}s<br>
-                    <strong>Catégorie:</strong> ${question.category}
-                </div>
-            </div>
-            <div class="answer-status ${userAnswer.isCorrect ? 'correct' : 'incorrect'}">
-                ${userAnswer.isCorrect ? 'Correct' : 'Incorrect'}
-            </div>
-        `;
-        
-        answersList.appendChild(answerItem);
-    });
-}
-
-// Fonction d'envoi vers Discord
-async function sendToDiscord() {
-    if (!discordWebhook.trim()) {
-        console.error('Webhook Discord non configuré');
-        return;
-    }
-    
-    // Afficher le statut d'envoi automatique
-    showDiscordStatus('📤 Envoi automatique des résultats sur Discord...', 'loading');
-    
-    try {
-        const embed = createDiscordEmbed();
-        
-        const response = await fetch(discordWebhook, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                username: discordUsername || 'SASP Quiz Bot',
-                embeds: [embed]
-            })
-        });
-        
-        if (response.ok) {
-            showDiscordStatus('✅ Résultats envoyés automatiquement sur Discord !', 'success');
-        } else {
-            throw new Error(`Erreur HTTP: ${response.status}`);
-        }
-    } catch (error) {
-        console.error('Erreur lors de l\'envoi vers Discord:', error);
-        showDiscordStatus('❌ Erreur lors de l\'envoi automatique vers Discord', 'error');
-    }
-}
-
-// Créer l'embed Discord
-function createDiscordEmbed() {
-    const percentage = Math.round((score / quizQuestions.length) * 100);
-    const wrongAnswers = quizQuestions.length - score;
-    const avgTime = answerTimes.length > 0 ? Math.round(answerTimes.reduce((a, b) => a + b) / answerTimes.length) : 0;
-    
-    // Calculer les statistiques par catégorie
-    const categoryStats = {};
-    userAnswers.forEach(answer => {
-        const category = answer.question.category;
-        if (!categoryStats[category]) {
-            categoryStats[category] = { correct: 0, total: 0 };
-        }
-        categoryStats[category].total++;
-        if (answer.isCorrect) {
-            categoryStats[category].correct++;
-        }
-    });
-    
-    // Créer le résumé des catégories
-    let categorySummary = '';
-    Object.entries(categoryStats).forEach(([category, stats]) => {
-        const categoryPercentage = Math.round((stats.correct / stats.total) * 100);
-        const emoji = categoryPercentage >= 80 ? '🟢' : categoryPercentage >= 60 ? '🟡' : '🔴';
-        categorySummary += `${emoji} **${category}**: ${stats.correct}/${stats.total} (${categoryPercentage}%)\n`;
-    });
-    
-    return {
-        title: '🎯 Résultats SASP Quiz 10-20',
-        description: `**${discordUsername || 'Officier SASP'}** a terminé l'entraînement complet !`,
-        color: percentage >= 80 ? 0x2ecc71 : percentage >= 60 ? 0xf39c12 : 0xe74c3c,
-        fields: [
-            {
-                name: '📊 Score Global',
-                value: `**${score}/${quizQuestions.length}** (${percentage}%)`,
-                inline: true
-            },
-            {
-                name: '⏱️ Temps Moyen',
-                value: `**${avgTime} secondes**`,
-                inline: true
-            },
-            {
-                name: '📈 Performance par Catégorie',
-                value: categorySummary || 'Aucune donnée',
-                inline: false
-            }
-        ],
-        footer: {
-            text: `Quiz terminé le ${new Date().toLocaleDateString('fr-FR')} à ${new Date().toLocaleTimeString('fr-FR')}`
-        },
-        timestamp: new Date().toISOString()
-    };
-}
-
-// Afficher le statut Discord
-function showDiscordStatus(message, type) {
-    discordStatus.textContent = message;
-    discordStatus.className = `discord-status ${type}`;
-    
-    // Effacer le message après 5 secondes
-    setTimeout(() => {
-        discordStatus.textContent = '';
-        discordStatus.className = 'discord-status';
-    }, 5000);
+    // Sauvegarder les résultats dans la base de données locale
+    saveResultsToLocalDB(score, avgTime);
 }
 
 function restartQuiz() {
@@ -414,6 +293,52 @@ function shuffleArray(array) {
         [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
     }
     return shuffled;
+}
+
+// Fonction pour sauvegarder les résultats dans la base de données locale
+function saveResultsToLocalDB(score, avgTime) {
+    try {
+        // Calculer les statistiques par catégorie
+        const categoryStats = {};
+        userAnswers.forEach(answer => {
+            const category = answer.question.category;
+            if (!categoryStats[category]) {
+                categoryStats[category] = { correct: 0, total: 0 };
+            }
+            categoryStats[category].total++;
+            if (answer.isCorrect) {
+                categoryStats[category].correct++;
+            }
+        });
+        
+        // Préparer les données du résultat
+        const resultData = {
+            score: score,
+            totalQuestions: quizQuestions.length,
+            avgTime: avgTime,
+            username: username || 'Officier SASP',
+            categories: categoryStats,
+            userAnswers: userAnswers,
+            date: new Date().toISOString()
+        };
+        
+        // Sauvegarder dans le localStorage
+        const savedResults = localStorage.getItem('quizResults');
+        let results = savedResults ? JSON.parse(savedResults) : [];
+        
+        results.push(resultData);
+        localStorage.setItem('quizResults', JSON.stringify(results));
+        
+        console.log('✅ Résultats sauvegardés dans la base de données locale');
+        
+        // Notifier la page d'administration si elle est ouverte
+        if (window.opener && window.opener.addQuizResult) {
+            window.opener.addQuizResult(resultData);
+        }
+        
+    } catch (error) {
+        console.error('❌ Erreur lors de la sauvegarde des résultats:', error);
+    }
 }
 
  

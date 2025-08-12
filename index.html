@@ -25,21 +25,18 @@
                     </div>
                 </div>
                 
-                <!-- Configuration Discord -->
-                <div class="discord-config">
-                    <h3>📱 Configuration Discord</h3>
-                    <div class="auto-discord-info">
-                        <span class="auto-icon">🤖</span>
-                        <span class="auto-text">Envoi automatique des résultats sur Discord</span>
-                    </div>
+                <!-- Configuration utilisateur -->
+                <div class="user-config">
+                    <h3>👤 Identification</h3>
                     <div class="input-group">
-                        <label for="discord-username">Nom d'utilisateur (optionnel):</label>
-                        <input type="text" id="discord-username" placeholder="Votre nom" />
-                        <small class="username-note">Ce nom apparaîtra dans les messages Discord</small>
+                        <label for="username">Nom de l'officier :</label>
+                        <input type="text" id="username" placeholder="Votre nom et prénom" />
+                        <small class="username-note">Ce nom sera enregistré avec vos résultats</small>
                     </div>
                 </div>
                 
-                <button id="start-btn" class="btn btn-primary">🚀 Commencer l'Entraînement Complet (Webhook Configuré)</button>
+                <button id="start-btn" class="btn btn-primary">🚀 Commencer l'Entraînement Complet</button>
+                <button id="admin-btn" class="btn btn-warning" style="margin-top: 15px;">🔐 Administration</button>
             </div>
         </div>
 
@@ -109,21 +106,7 @@
             <div class="results-content">
                 <h1>🎉 Entraînement Terminé !</h1>
                 <p class="completion-message">Félicitations ! Vous avez terminé l'entraînement complet aux positions 10-20.</p>
-                <p class="discord-notice">Vos résultats ont été automatiquement envoyés sur Discord.</p>
-                
-                <!-- Configuration Discord -->
-                <div class="discord-config">
-                    <h3>📱 Configuration Discord</h3>
-                    <div class="auto-discord-info">
-                        <span class="auto-icon">🤖</span>
-                        <span class="auto-text">Envoi automatique des résultats sur Discord</span>
-                    </div>
-                    <div class="input-group">
-                        <label for="discord-username">Nom d'utilisateur (optionnel):</label>
-                        <input type="text" id="discord-username" placeholder="Votre nom" />
-                        <small class="username-note">Ce nom apparaîtra dans les messages Discord</small>
-                    </div>
-                </div>
+                <p class="results-notice">Vos résultats ont été sauvegardés localement.</p>
                 
                 <div class="action-buttons">
                     <button id="restart-btn" class="btn btn-primary">Recommencer</button>

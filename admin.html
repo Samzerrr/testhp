@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔐 Administration SASP Quiz</title>
+    <link rel="stylesheet" href="admin.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <!-- Écran de connexion -->
+        <div id="login-screen" class="screen active">
+            <div class="login-content">
+                <h1>🔐 Administration SASP Quiz</h1>
+                <p>Accès sécurisé aux résultats des entraînements</p>
+                
+                <div class="login-form">
+                    <div class="input-group">
+                        <label for="password">Mot de passe :</label>
+                        <input type="password" id="password" placeholder="Entrez le mot de passe" />
+                    </div>
+                    <button id="login-btn" class="btn btn-primary">🔓 Se connecter</button>
+                </div>
+                
+                <div class="back-link">
+                    <a href="index.html">← Retour au Quiz</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Écran d'administration -->
+        <div id="admin-screen" class="screen">
+            <div class="admin-header">
+                <h1>📊 Administration SASP Quiz</h1>
+                <div class="admin-actions">
+                    <button id="refresh-btn" class="btn btn-secondary">🔄 Actualiser</button>
+                    <button id="export-btn" class="btn btn-success">📥 Exporter JSON</button>
+                    <button id="logout-btn" class="btn btn-danger">🚪 Déconnexion</button>
+                </div>
+            </div>
+
+            <div class="stats-overview">
+                <div class="stat-card">
+                    <span class="stat-number" id="total-quizzes">0</span>
+                    <span class="stat-label">Quiz terminés</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number" id="avg-score">0%</span>
+                    <span class="stat-label">Score moyen</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number" id="total-questions">0</span>
+                    <span class="stat-label">Questions totales</span>
+                </div>
+            </div>
+
+            <div class="results-container">
+                <h2>📋 Historique des Résultats</h2>
+                <div class="results-list" id="results-list">
+                    <!-- Les résultats seront chargés ici -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="admin.js"></script>
+</body>
+</html>
